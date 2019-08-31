@@ -58,6 +58,8 @@ func parseAttribute(decl *parser.Decl) (Attribute, error) {
 			case parser.LocalTimestampToken, parser.NowToken:
 				log.Debug("Setting default value to NOW() func !\n")
 				attr.defaultValue = func() interface{} { return time.Now().Format(parser.DateLongFormat) }
+			case parser.GenRandomUUIDToken:
+				attr.defaultValue = func() interface{} { return "ABCDEFGHIJKL" }
 			default:
 				log.Debug("Setting default value to '%v'\n", typeDecl[i].Decl[0].Lexeme)
 				attr.defaultValue = typeDecl[i].Decl[0].Lexeme

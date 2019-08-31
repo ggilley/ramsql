@@ -179,7 +179,7 @@ func (p *parser) parseTable(tokens []Token) (*Decl, error) {
 					return nil, err
 				}
 				newAttribute.Add(dDecl)
-				vDecl, err := p.consumeToken(FalseToken, StringToken, NumberToken, LocalTimestampToken)
+				vDecl, err := p.consumeToken(FalseToken, StringToken, NumberToken, LocalTimestampToken, NowToken, GenRandomUUIDToken)
 				if err != nil {
 					return nil, err
 				}
