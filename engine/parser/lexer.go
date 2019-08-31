@@ -77,6 +77,7 @@ const (
 	FalseToken
 	UniqueToken
 	NowToken
+	GenRandomUUIDToken
 	OffsetToken
 
 	// Type Token
@@ -173,6 +174,7 @@ func (l *lexer) lex(instruction []byte) ([]Token, error) {
 	matchers = append(matchers, l.MatchFalseToken)
 	matchers = append(matchers, l.MatchUniqueToken)
 	matchers = append(matchers, l.MatchNowToken)
+	matchers = append(matchers, l.MatchGenRandomUUIDToken)
 	matchers = append(matchers, l.MatchOffsetToken)
 	// Type Matcher
 	matchers = append(matchers, l.MatchPrimaryToken)
@@ -225,6 +227,10 @@ func (l *lexer) MatchSpaceToken() bool {
 
 func (l *lexer) MatchNowToken() bool {
 	return l.Match([]byte("now()"), NowToken)
+}
+
+func (l *lexer) MatchGenRandomUUIDToken() bool {
+	return l.Match([]byte("gen_random_uuid ( )"), GenRandomUUIDToken)
 }
 
 func (l *lexer) MatchUniqueToken() bool {

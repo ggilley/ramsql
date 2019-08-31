@@ -6,7 +6,7 @@ import (
 )
 
 func TestLexerSimple(t *testing.T) {
-	query := `CREATE TABLE `+"`"+`account`+"`"+``
+	query := `CREATE TABLE ` + "`" + `account` + "`" + ``
 
 	lexer := lexer{}
 	decls, err := lexer.lex([]byte(query))
@@ -39,6 +39,24 @@ func TestLexerWithGTOEandLTOEOperator(t *testing.T) {
 	}
 
 	if len(decls) != 21 {
+		t.Fatalf("Lexing failed, expected 21 tokens, got %d", len(decls))
+	}
+}
+
+func TestLexerWithGenRandomUUID(t *testing.T) {
+	query := `CREATE TABLE IF NOT EXISTS migrations (
+		id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+		created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		name TEXT NOT NULL UNIQUE
+		);`
+
+	lexer := lexer{}
+	decls, err := lexer.lex([]byte(query))
+	if err != nil {
+		t.Fatalf("Cannot lex <%s> string", query)
+	}
+
+	if len(decls) != 62 {
 		t.Fatalf("Lexing failed, expected 21 tokens, got %d", len(decls))
 	}
 }
