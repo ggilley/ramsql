@@ -56,7 +56,7 @@ func TestLexerWithGenRandomUUID(t *testing.T) {
 		t.Fatalf("Cannot lex <%s> string", query)
 	}
 
-	if len(decls) != 62 {
+	if len(decls) != 60 {
 		t.Fatalf("Lexing failed, expected 21 tokens, got %d", len(decls))
 	}
 }

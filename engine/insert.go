@@ -105,6 +105,8 @@ func insert(r *Relation, attributes []*parser.Decl, values []*parser.Decl, retur
 				switch values[x].Token {
 				case parser.NowToken:
 					t.Append(time.Now().Format(parser.DateLongFormat))
+				case parser.GenRandomUUIDToken:
+					t.Append("ABCDEFGHIJKLMNO")
 				default:
 					t.Append(values[x].Lexeme)
 

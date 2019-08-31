@@ -662,7 +662,7 @@ func (p *parser) parseValue() (*Decl, error) {
 		}
 	}
 
-	valueDecl, err := p.consumeToken(StringToken, NumberToken, DateToken, NowToken)
+	valueDecl, err := p.consumeToken(StringToken, NumberToken, DateToken, NowToken, GenRandomUUIDToken)
 	if err != nil {
 		debug("parseValue: Wasn't expecting %v\n", p.tokens[p.index])
 		return nil, err
@@ -746,7 +746,7 @@ func (p *parser) parseListElement() (*Decl, error) {
 	}
 
 	var valueDecl *Decl
-	valueDecl, err := p.consumeToken(StringToken, NumberToken, NullToken, DateToken, NowToken)
+	valueDecl, err := p.consumeToken(StringToken, NumberToken, NullToken, DateToken, NowToken, GenRandomUUIDToken)
 	if err != nil {
 		return nil, err
 	}

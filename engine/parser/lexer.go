@@ -230,7 +230,7 @@ func (l *lexer) MatchNowToken() bool {
 }
 
 func (l *lexer) MatchGenRandomUUIDToken() bool {
-	return l.Match([]byte("gen_random_uuid ( )"), GenRandomUUIDToken)
+	return l.Match([]byte("gen_random_uuid()"), GenRandomUUIDToken)
 }
 
 func (l *lexer) MatchUniqueToken() bool {
