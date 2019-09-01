@@ -301,7 +301,7 @@ func (p *parser) parseInsert() (*Instruction, error) {
 }
 
 func (p *parser) parseType() (*Decl, error) {
-	typeDecl, err := p.consumeToken(StringToken)
+	typeDecl, err := p.consumeToken(StringToken, TimestampTZToken)
 	if err != nil {
 		return nil, err
 	}
@@ -510,7 +510,7 @@ func (p *parser) parseQuotedToken() (*Decl, error) {
 	quoted := false
 	quoteToken := DoubleQuoteToken
 
-	if p.is(DoubleQuoteToken) || p.is(BacktickToken){
+	if p.is(DoubleQuoteToken) || p.is(BacktickToken) {
 		quoted = true
 		quoteToken = p.cur().Token
 		if err := p.next(); err != nil {
@@ -662,7 +662,7 @@ func (p *parser) parseValue() (*Decl, error) {
 		}
 	}
 
-	valueDecl, err := p.consumeToken(StringToken, NumberToken, DateToken, NowToken, GenRandomUUIDToken)
+	valueDecl, err := p.consumeToken(FalseToken, StringToken, NumberToken, LocalTimestampToken, TimestampTZToken, DateToken, NowToken, GenRandomUUIDToken)
 	if err != nil {
 		debug("parseValue: Wasn't expecting %v\n", p.tokens[p.index])
 		return nil, err
@@ -676,6 +676,11 @@ func (p *parser) parseValue() (*Decl, error) {
 			debug("uuuh, wasn't a quote")
 			return nil, err
 		}
+	}
+
+	// timestamptz '2000-01-01 00:00:00.000000-00:00'
+	if valueDecl.Token == TimestampTZToken {
+		return p.parseValue()
 	}
 
 	return valueDecl, nil

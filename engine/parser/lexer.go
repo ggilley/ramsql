@@ -75,11 +75,14 @@ const (
 	ForToken
 	DefaultToken
 	LocalTimestampToken
+	TimestampTZToken
 	FalseToken
 	UniqueToken
 	NowToken
 	GenRandomUUIDToken
 	OffsetToken
+	ReferencesToken
+	CascadeToken
 
 	// Type Token
 
@@ -174,11 +177,15 @@ func (l *lexer) lex(instruction []byte) ([]Token, error) {
 	matchers = append(matchers, l.MatchForToken)
 	matchers = append(matchers, l.MatchDefaultToken)
 	matchers = append(matchers, l.MatchLocalTimestampToken)
+	matchers = append(matchers, l.MatchTimestampTZToken)
 	matchers = append(matchers, l.MatchFalseToken)
 	matchers = append(matchers, l.MatchUniqueToken)
 	matchers = append(matchers, l.MatchNowToken)
 	matchers = append(matchers, l.MatchGenRandomUUIDToken)
 	matchers = append(matchers, l.MatchOffsetToken)
+	matchers = append(matchers, l.MatchReferencesToken)
+	matchers = append(matchers, l.MatchCascadeToken)
+
 	// Type Matcher
 	matchers = append(matchers, l.MatchPrimaryToken)
 	matchers = append(matchers, l.MatchKeyToken)
@@ -242,6 +249,10 @@ func (l *lexer) MatchUniqueToken() bool {
 
 func (l *lexer) MatchLocalTimestampToken() bool {
 	return l.Match([]byte("localtimestamp"), LocalTimestampToken)
+}
+
+func (l *lexer) MatchTimestampTZToken() bool {
+	return l.Match([]byte("timestamptz"), TimestampTZToken)
 }
 
 func (l *lexer) MatchDefaultToken() bool {
@@ -408,6 +419,14 @@ func (l *lexer) MatchOffsetToken() bool {
 	return l.Match([]byte("offset"), OffsetToken)
 }
 
+func (l *lexer) MatchReferencesToken() bool {
+	return l.Match([]byte("references"), ReferencesToken)
+}
+
+func (l *lexer) MatchCascadeToken() bool {
+	return l.Match([]byte("cascade"), CascadeToken)
+}
+
 func (l *lexer) MatchStringToken() bool {
 
 	i := l.pos
@@ -556,8 +575,7 @@ func (l *lexer) MatchDoubleQuoteToken() bool {
 
 func (l *lexer) MatchCommentToken() bool {
 
-	if l.instruction[l.pos] == '-' && l.pos + 1 < l.instructionLen && l.instruction[l.pos + 1] == '-' {
-		fmt.Printf("instruction: %v\n", l.instruction)
+	if l.instruction[l.pos] == '-' && l.pos+1 < l.instructionLen && l.instruction[l.pos+1] == '-' {
 		for l.pos < l.instructionLen &&
 			l.instruction[l.pos] != '\n' {
 			l.pos++

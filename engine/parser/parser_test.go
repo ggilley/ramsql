@@ -247,6 +247,14 @@ func TestUnique(t *testing.T) {
 	}
 }
 
+func TestTypeTimestampTZ(t *testing.T) {
+	query := `CREATE TABLE IF NOT EXISTS migrations (
+		created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+		);`
+
+	parse(query, 1, t)
+}
+
 func TestDefaultWithGenRandomUUID(t *testing.T) {
 	query := `CREATE TABLE IF NOT EXISTS migrations (
 		id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -285,6 +293,30 @@ func TestCommentInContext(t *testing.T) {
 		active BOOLEAN NOT NULL DEFAULT false
 	
 	);`
+	parse(query, 1, t)
+}
+
+func TestReferences(t *testing.T) {
+	query := `CREATE TABLE users (
+		tenant_id BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+		id BIGSERIAL,
+	
+		created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	
+		email TEXT NOT NULL UNIQUE,
+		password TEXT NOT NULL,
+	
+		name TEXT NOT NULL DEFAULT '',
+		active BOOLEAN NOT NULL DEFAULT false,
+	
+		roles TEXT NOT NULL DEFAULT '',
+	
+		last_login TIMESTAMPTZ NOT NULL DEFAULT timestamptz '2000-01-01 00:00:00.000000-00:00',
+	
+		PRIMARY KEY(tenant_id, id)
+	);`
+
 	parse(query, 1, t)
 }
 

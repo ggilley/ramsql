@@ -98,7 +98,7 @@ func updateValues(r *Relation, row int, values map[string]interface{}) error {
 		}
 		log.Debug("Type of '%s' is '%s'\n", r.table.attributes[i].name, r.table.attributes[i].typeName)
 		switch strings.ToLower(r.table.attributes[i].typeName) {
-		case "timestamp", "localtimestamp":
+		case "timestamp", "localtimestamp", "timestamptz":
 			s, ok := val.(string)
 			if ok && (s == "current_timestamp" || s == "now()") {
 				val = time.Now()

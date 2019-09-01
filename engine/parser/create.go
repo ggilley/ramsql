@@ -179,11 +179,64 @@ func (p *parser) parseTable(tokens []Token) (*Decl, error) {
 					return nil, err
 				}
 				newAttribute.Add(dDecl)
-				vDecl, err := p.consumeToken(FalseToken, StringToken, NumberToken, LocalTimestampToken, NowToken, GenRandomUUIDToken)
+				vDecl, err := p.parseValue()
 				if err != nil {
 					return nil, err
 				}
 				dDecl.Add(vDecl)
+			case ReferencesToken: // REFERENCES
+				dDecl, err := p.consumeToken(ReferencesToken)
+				if err != nil {
+					return nil, err
+				}
+				newAttribute.Add(dDecl)
+
+				// references name(id)
+				newReferences := NewDecl(tokens[p.index])
+				newAttribute.Add(newReferences)
+
+				if err = p.next(); err != nil {
+					return nil, fmt.Errorf("Unexpected end")
+				}
+
+				_, err = p.consumeToken(BracketOpeningToken)
+				if err != nil {
+					return nil, err
+				}
+
+				newKey := NewDecl(tokens[p.index])
+				newReferences.Add(newKey)
+
+				if err = p.next(); err != nil {
+					return nil, fmt.Errorf("Unexpected end")
+				}
+
+				_, err = p.consumeToken(BracketClosingToken)
+				if err != nil {
+					return nil, err
+				}
+			case OnToken:
+				dDecl, err := p.consumeToken(OnToken)
+				if err != nil {
+					return nil, err
+				}
+				newAttribute.Add(dDecl)
+
+				newOn := NewDecl(tokens[p.index])
+				newAttribute.Add(newOn)
+
+				if p.hasNext() {
+					if err = p.next(); err != nil {
+						return nil, fmt.Errorf("Unexpected end")
+					}
+					if tokens[p.index].Token == CascadeToken {
+						_, err := p.consumeToken(CascadeToken)
+						if err != nil {
+							return nil, err
+						}
+					}
+				}
+
 			default:
 				// Unknown column constraint
 				return nil, p.syntaxError()

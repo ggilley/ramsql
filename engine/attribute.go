@@ -55,7 +55,7 @@ func parseAttribute(decl *parser.Decl) (Attribute, error) {
 		if typeDecl[i].Token == parser.DefaultToken {
 			log.Debug("we get a default value for %s: %s!\n", attr.name, typeDecl[i].Decl[0].Lexeme)
 			switch typeDecl[i].Decl[0].Token {
-			case parser.LocalTimestampToken, parser.NowToken:
+			case parser.LocalTimestampToken, parser.NowToken, parser.TimestampTZToken:
 				log.Debug("Setting default value to NOW() func !\n")
 				attr.defaultValue = func() interface{} { return time.Now().Format(parser.DateLongFormat) }
 			case parser.GenRandomUUIDToken:
@@ -64,6 +64,10 @@ func parseAttribute(decl *parser.Decl) (Attribute, error) {
 				log.Debug("Setting default value to '%v'\n", typeDecl[i].Decl[0].Lexeme)
 				attr.defaultValue = typeDecl[i].Decl[0].Lexeme
 			}
+		}
+
+		if typeDecl[i].Token == parser.ReferencesToken {
+
 		}
 
 		// Check if attribute is unique
