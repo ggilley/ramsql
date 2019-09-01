@@ -39,7 +39,7 @@ func parseAttribute(decl *parser.Decl) (Attribute, error) {
 	if len(decl.Decl) < 1 {
 		return attr, fmt.Errorf("Attribute %s has no type", decl.Lexeme)
 	}
-	if decl.Decl[0].Token != parser.StringToken {
+	if decl.Decl[0].Token != parser.StringToken && decl.Decl[0].Token != parser.TimestampTZToken {
 		return attr, fmt.Errorf("engine: expected attribute type, got %v:%v", decl.Decl[0].Token, decl.Decl[0].Lexeme)
 	}
 	attr.typeName = decl.Decl[0].Lexeme
