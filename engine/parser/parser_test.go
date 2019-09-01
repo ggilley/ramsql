@@ -257,6 +257,12 @@ func TestDefaultWithGenRandomUUID(t *testing.T) {
 	parse(query, 1, t)
 }
 
+func TestComment(t *testing.T) {
+	query := `-- Comments look like this`
+
+	parse(query, 0, t)
+}
+
 func parse(query string, instructionNumber int, t *testing.T) []Instruction {
 	log.UseTestLogger(t)
 

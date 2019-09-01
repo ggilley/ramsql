@@ -21,6 +21,7 @@ const (
 	LessOrEqualToken
 	GreaterOrEqualToken
 	BacktickToken
+	CommentToken
 
 	// QuoteToken
 
@@ -131,6 +132,8 @@ func (l *lexer) lex(instruction []byte) ([]Token, error) {
 	matchers = append(matchers, l.MatchLeftDipleToken)
 	matchers = append(matchers, l.MatchRightDipleToken)
 	matchers = append(matchers, l.MatchBacktickToken)
+	matchers = append(matchers, l.MatchCommentToken)
+
 	// First order Matcher
 	matchers = append(matchers, l.MatchCreateToken)
 	matchers = append(matchers, l.MatchSelectToken)
@@ -545,6 +548,16 @@ func (l *lexer) MatchDoubleQuoteToken() bool {
 			return true
 		}
 
+		return true
+	}
+
+	return false
+}
+
+func (l *lexer) MatchCommentToken() bool {
+
+	if l.instruction[l.pos] == '-' && l.pos + 1 < l.instructionLen && l.instruction[l.pos + 1] == '-' {
+		l.pos = l.instructionLen
 		return true
 	}
 
