@@ -86,7 +86,30 @@ func (p *parser) parseTable(tokens []Token) (*Decl, error) {
 			_, err := p.parsePrimaryKey()
 			if err != nil {
 				return nil, err
+			
 			}
+			// Closing bracket means table parsing stops.
+			if tokens[p.index].Token == BracketClosingToken {
+				p.index++
+				return tableDecl, nil
+			}
+
+			// Comma means continue on next table column.
+			p.index++
+			continue
+		case UniqueToken:
+			_, err := p.parseUnique()
+			if err != nil {
+				return nil, err
+			}
+			// Closing bracket means table parsing stops.
+			if tokens[p.index].Token == BracketClosingToken {
+				p.index++
+				return tableDecl, nil
+			}
+
+			// Comma means continue on next table column.
+			p.index++
 			continue
 		default:
 		}
@@ -147,7 +170,7 @@ func (p *parser) parseTable(tokens []Token) (*Decl, error) {
 
 					if err = p.next(); err != nil {
 						return nil, fmt.Errorf("Unexpected end")
-					}
+					}					
 				}
 			case AutoincrementToken:
 				autoincDecl, err := p.consumeToken(AutoincrementToken)
@@ -291,4 +314,33 @@ func (p *parser) parsePrimaryKey() (*Decl, error) {
 	}
 
 	return primaryDecl, nil
+}
+
+func (p *parser) parseUnique() (*Decl, error) {
+	uniqueDecl, err := p.consumeToken(UniqueToken)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = p.consumeToken(BracketOpeningToken)
+	if err != nil {
+		return nil, err
+	}
+
+	for {
+		d, err := p.parseQuotedToken()
+		if err != nil {
+			return nil, err
+		}
+
+		d, err = p.consumeToken(CommaToken, BracketClosingToken)
+		if err != nil {
+			return nil, err
+		}
+		if d.Token == BracketClosingToken {
+			break
+		}
+	}
+
+	return uniqueDecl, nil
 }

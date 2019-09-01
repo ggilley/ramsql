@@ -320,6 +320,26 @@ func TestReferences(t *testing.T) {
 	parse(query, 1, t)
 }
 
+func TestUniquePairing(t *testing.T) {
+	query := `create table grants (
+		tenant_id BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+		id BIGSERIAL UNIQUE,
+	
+		created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	
+		role_id BIGINT NOT NULL REFERENCES roles(id) on DELETE CASCADE,
+		permission_id BIGINT NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
+	
+		parameters TEXT NOT NULL DEFAULT '',
+	
+		PRIMARY KEY (tenant_id, id),
+		UNIQUE (role_id, permission_id)
+	);`
+
+	parse(query, 1, t)
+}
+
 func parse(query string, instructionNumber int, t *testing.T) []Instruction {
 	log.UseTestLogger(t)
 
