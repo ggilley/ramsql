@@ -557,7 +557,11 @@ func (l *lexer) MatchDoubleQuoteToken() bool {
 func (l *lexer) MatchCommentToken() bool {
 
 	if l.instruction[l.pos] == '-' && l.pos + 1 < l.instructionLen && l.instruction[l.pos + 1] == '-' {
-		l.pos = l.instructionLen
+		fmt.Printf("instruction: %v\n", l.instruction)
+		for l.pos < l.instructionLen &&
+			l.instruction[l.pos] != '\n' {
+			l.pos++
+		}
 		t := Token{
 			Token:  CommentToken,
 			Lexeme: "--",

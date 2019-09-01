@@ -263,6 +263,31 @@ func TestComment(t *testing.T) {
 	parse(query, 0, t)
 }
 
+func TestCommentInContext(t *testing.T) {
+	query := `-- DON'T FORGET GO GENERATE!!!
+
+	-- use defaultdb;
+	-- DROP DATABASE IF EXISTS foo cascade;
+	-- CREATE DATABASE foo;
+	-- use foo;
+	
+	create TABLE tenants (
+		id BIGSERIAL PRIMARY KEY,
+	
+		created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	
+		name TEXT NOT NULL UNIQUE,
+	
+		domain TEXT NOT NULL UNIQUE,
+		subdomain TEXT NOT NULL UNIQUE,
+	
+		active BOOLEAN NOT NULL DEFAULT false
+	
+	);`
+	parse(query, 1, t)
+}
+
 func parse(query string, instructionNumber int, t *testing.T) []Instruction {
 	log.UseTestLogger(t)
 
