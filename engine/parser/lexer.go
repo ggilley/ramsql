@@ -558,6 +558,11 @@ func (l *lexer) MatchCommentToken() bool {
 
 	if l.instruction[l.pos] == '-' && l.pos + 1 < l.instructionLen && l.instruction[l.pos + 1] == '-' {
 		l.pos = l.instructionLen
+		t := Token{
+			Token:  CommentToken,
+			Lexeme: "--",
+		}
+		l.tokens = append(l.tokens, t)
 		return true
 	}
 

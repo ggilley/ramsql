@@ -857,7 +857,7 @@ func (p *parser) syntaxError() error {
 
 func stripSpaces(t []Token) (ret []Token) {
 	for i := range t {
-		if t[i].Token != SpaceToken {
+		if t[i].Token != SpaceToken && t[i].Token != CommentToken {
 			ret = append(ret, t[i])
 		}
 	}
