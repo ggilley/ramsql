@@ -745,6 +745,33 @@ func (p *parser) parseListElement() (*Decl, error) {
 		return v, nil
 	}
 
+	if p.is(BracketOpeningToken) {
+		valueDecl, err := p.consumeToken(BracketOpeningToken)
+		if err != nil {
+			return nil, err
+		}
+
+		gotList := false
+		for {
+			decl := NewDecl(p.tokens[p.index])
+			if err := p.next(); err != nil {
+				return nil, err
+			}
+
+			valueDecl.Add(decl)
+			gotList = true
+
+			if p.is(BracketClosingToken) {
+				if gotList == false {
+					return nil, fmt.Errorf("empty list of value")
+				}
+				p.consumeToken(BracketClosingToken)
+				break
+			}
+		}
+		return valueDecl, nil
+	}
+
 	if p.is(SimpleQuoteToken) || p.is(DoubleQuoteToken) {
 		quoted = true
 		p.next()

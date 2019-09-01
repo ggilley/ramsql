@@ -340,6 +340,11 @@ func TestUniquePairing(t *testing.T) {
 	parse(query, 1, t)
 }
 
+func TestParseInsertWithSelect(t *testing.T) {
+	query := `insert into users (email, name, password, tenant_id) values ('foo@apple.com', 'greg', 'hello', (select id from tenants where name = 'apple'));`
+	parse(query, 1, t)
+}
+
 func parse(query string, instructionNumber int, t *testing.T) []Instruction {
 	log.UseTestLogger(t)
 
